@@ -19,7 +19,7 @@ See — and later repeat — the simplest automation on Google Cloud: take an ag
 3. Give it a name and set it to repeat **daily at 12:01 AM** (the DIN §29 step 5 schedule).
 4. For the destination, choose your dataset — your `class` dataset from this morning (DIN §3) — and a table name, for example `march_zip_sales`.
 5. Set the write preference to **Overwrite table** (`WRITE_TRUNCATE`).
-6. Save. The job now appears under **Scheduled queries** in the BigQuery console — open it and use the manual-run option once to prove it fires.
+6. Save. **The first schedule in a project pops a one-time Google authorization** for the BigQuery Data Transfer Service (scheduled queries run through it) — approve it, and enable the API if asked. If nothing happens when you click Save, look for a blocked-popup icon at the right end of the address bar: allow popups for `console.cloud.google.com` and click Save again. Once saved, the job appears under **Scheduled queries** in the BigQuery console — open it and use the manual-run option once to prove it fires.
 
 ### What "overwrite destination" means
 
@@ -34,18 +34,19 @@ A scheduled query is serverless: nothing to provision, patch, or babysit. You wr
 The file [`nested_queries.sql`](nested_queries.sql) in this folder — unchanged from the course demo repository — holds the example queries the DIN §29 activity is built around: March 2018 sales-by-zip queries against the shared nested/repeated demo table.
 
 1. Open the file and take the first query (sales by zip for March, from the `nested_once` table).
-2. Replace the `<project-id>` placeholder with the shared demo project — your instructor will confirm it in class (it is the `roi-bq-demos` project you starred this morning).
+2. Replace the `<project-id>` placeholder with the shared demo project — your instructor will confirm it in class. For this delivery it is **`roigcp-imran-ahmad`** (dataset `bq_demo`), the instructor's demo project — the DIN page's own `roi-bq-demos` copy is not reachable from our accounts, so the instructor rebuilt the same tables at class size with [`build_demo_tables.sql`](build_demo_tables.sql) (same schema, same queries, ~1.2M orders instead of billions).
 3. Run it once in your lab project, writing results into your `class` dataset (destination `class.march_zip_sales`).
 4. Schedule it using the steps above: daily, 12:01 AM, overwrite.
 
 Two things to notice while you run it:
 
 - `UNNEST(line_items)` — the demo table is nested/repeated: one order row carries an array of line-item structs. Different from your flat SQL Server tables, and one of BigQuery's genuinely new tricks worth a second look.
-- **Bytes processed** (the editor shows it before and after a run). The full DIN §29 activity compares querying the large base table against the small derived one — the base demo table is big, so glance at the scan size. That number is your Power BI cost argument. The scheduled overwrite itself is low cost.
+- **Bytes processed** (the editor shows it before and after a run). The full DIN §29 activity compares querying the base table against the small derived one — glance at the scan size of each; the derived table is tiny by construction. That contrast is your Power BI cost argument. The scheduled overwrite itself is low cost.
 
 ## Common gotchas
 
 > - **API prompt:** scheduled queries ride on the BigQuery Data Transfer Service. If the console asks to enable it, click Enable and continue.
+> - **Consent popup:** the first scheduled query you ever save in a project opens a Google authorization window for the Data Transfer Service. It is a popup — if your browser blocked it, nothing happens on Save and there is no error. Allow the popup and Save again.
 > - **Destination dataset must exist first.** Your `class` dataset does (you created it this morning); any other dataset must be created before a schedule can target it.
 > - **Overwrite vs append:** double-check the write preference. An accidental append doubles the table every night.
 > - **Project/location mix-ups:** while learning, keep the source data, the destination dataset, and the schedule in your lab project and its default location — cross-project and cross-location combinations are where first attempts go wrong.

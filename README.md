@@ -54,6 +54,13 @@ The course is built around your real project:
 - The lab's own step-by-step instructions live in the classroom. The companions in this pack add orientation, gotchas, and context around them — they don't replace the lab instructions.
 - One thing you create yourself (not in a lab): on Day 1 morning you create a dataset named `class` in your lab project. Every afternoon loading activity writes into it — don't skip that step.
 
+## The two combined slide decks
+
+- **[Iowa-DE-Day1-Student-Slides.pdf](Iowa-DE-Day1-Student-Slides.pdf)** (135 pages) — every slide projected on Day 1, in agenda order: cover and the day's agenda up front, each module's slide deck, and a one-page brief (what to do, how much time you have) for every hands-on activity, lab and break.
+- **[Iowa-DE-Day2-Student-Slides.pdf](Iowa-DE-Day2-Student-Slides.pdf)** (208 pages) — the same treatment for Day 2.
+
+Both are note-free (built from the instructor projection decks, not the speaker-notes editions) and bookmarked two levels deep — each block on the clock, then each section inside it — so you can jump straight to any module, lab, or activity.
+
 ## What's in this pack
 
 | Folder | What you'll find |

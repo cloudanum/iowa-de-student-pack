@@ -36,13 +36,13 @@ Follow your instructor's screen; the annotations below tell you what to notice a
 
 Starring pins someone else's project into your Explorer so you can browse and query it.
 
-5. In the Explorer pane, click **+ Add**, then choose **Star a project by name**.
-6. Type the name exactly and confirm: `bigquery-samples`
+5. Open the project in the console — the quickest way is the direct URL: `https://console.cloud.google.com/bigquery?project=bigquery-samples` (or find it in the **project picker** at the top).
+6. In the Explorer pane, click the **star outline** next to the project's name so it turns solid — the project is now starred (pinned) in your Explorer.
 7. Repeat for: `bigquery-public-data`
 8. Repeat for: `roi-bq-demos`
 9. Star any additional projects your instructor calls out.
 
-(Console docs: [starring a project](https://cloud.google.com/bigquery/docs/bigquery-web-ui#starring_adding_a_project))
+(Console docs: [starring a project](https://cloud.google.com/bigquery/docs/bigquery-web-ui#starring_adding_a_project). The console changes often — older instructions say "+ Add → Star a project by name"; today you open the project and click its star in the Explorer. The recorded walkthrough shows both this and everything below.)
 
 ### 3. Explore datasets
 

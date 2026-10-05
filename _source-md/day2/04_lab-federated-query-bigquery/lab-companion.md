@@ -35,7 +35,66 @@ The honest trade-offs, so you apply it deliberately: the source system takes the
 - **Your first `EXTERNAL_QUERY`:** the inner statement is **PostgreSQL**, executed on the AlloyDB side. BigQuery syntax inside the quotes fails — this is the single most common trip point. Watch your quoting too: single quotes inside the inner query must be escaped (double them, or wrap the whole inner query in triple single quotes `'''...'''` the way Google's own examples do).
 - **The payoff is the join:** historical/analytical data on the BigQuery side ⨝ live transactional rows on the AlloyDB side, one statement. If you get nothing else working, get this — a working connection you can re-create later is the real takeaway.
 
+## The critical steps, in pictures (recorded from a real run)
+
+These frames are from an instructor dry-run of this exact lab. Project IDs, student logins and passwords in them are per-lab — yours will differ; the steps are identical.
+
+Consent and API prompts are part of the ritual in a fresh lab project — click through them.
+
+![Consent prompt in a fresh lab project](screenshots/03-add-data-flyout.png)
+
+BigQuery ▸ Studio ▸ **+ Add data** ▸ Data Source Type = **Databases** ▸ the **Google Cloud AlloyDB** card.
+
+![Add data flyout with the AlloyDB card](screenshots/04-alloydb-federation-card.png)
+
+Pick **BigQuery Federation** under "Access external data in place" — federation, not a load or a Datastream replication.
+
+![BigQuery Federation card](screenshots/05-alloydb-after-click.png)
+
+The "linked server definition" moment: Connection type **AlloyDB**, Connection ID **AlloyDB-weblog**, Location type **Region**, region **us-central1**. Go slowly here — everything after this is just SQL.
+
+![Connection form, top half](screenshots/07-connection-form-filled.png)
+
+Bottom half of the same form: username `postgres`, the password from **your** lab's instructions panel, database `postgres`, and the full AlloyDB instance path — then **Create connection**.
+
+![Connection form, bottom half](screenshots/08-connection-form-bottom.png)
+
+"AlloyDB-weblog" created. The linked server exists; nothing in it can be queried yet — its service account needs IAM first.
+
+![Connection created toast](screenshots/09-connection-created.png)
+
+Open the connection (Pipelines & Connections ▸ Connections ▸ AlloyDB-weblog) and copy the **Service account id** — this is the principal the IAM grant goes to.
+
+![Connection details with the service account id](screenshots/15-connection-info-sa.png)
+
+IAM ▸ **Grant access**: paste the service account, **press ENTER to make it a chip**, then add both roles — **AlloyDB Client** and **BigQuery Connection User** — and Save. Wait for the "Policy updated" toast.
+
+![IAM grant panel with both roles](screenshots/11-iam-grant-panel.png)
+
+What the chip trap looks like: the email is in the box, yet Save says "Enter at least one principal" — the text was never committed as a chip.
+
+![The chip trap](screenshots/26-iam-chip-error.jpg)
+
+Self-check landmark: the connection shows under **Connections** in the Explorer tree, next to the `customers` dataset — remember, the AlloyDB tables will NOT appear here; federation is query-only.
+
+![Connection in the Explorer tree](screenshots/10-connection-details-sa.png)
+
+First `EXTERNAL_QUERY`, green: rows coming back from AlloyDB's `web_log` while you sit in BigQuery. The inner string ran as PostgreSQL on the AlloyDB side.
+
+![First federated query results](screenshots/23-query1-success.png)
+
+The payoff — one statement, two homes: `url`/`timestamp` from live AlloyDB rows joined with `traffic_source`, `zip` and `state` from the BigQuery customers table. If you get nothing else working in the lab, get this.
+
+![The join results](screenshots/24-join-success.png)
+
+And when it goes wrong, this is the face of it — the PostgreSQL connection error with Google's own troubleshooting link. Nine times out of ten it is the IAM chip trap or the per-lab password.
+
+![The PostgreSQL connection error](screenshots/12-query1-results.png)
+
 ## Common gotchas
+
+- **"Connect to PostgreSQL server failed: server closed the connection unexpectedly"** — this one error has two sneaky causes, both at setup time. First, credentials: the connection form values are per-lab — copy the password from YOUR running lab's instructions panel (it matches your console password), not from a stale manual page or a previous run. Second — and this one bites everyone — the IAM grant silently never happened: see the chip trap next.
+- **The principal chip trap (the #1 silent failure):** when you paste the connection service account into "New principals" on the IAM "Grant access" panel, you MUST press Enter afterwards so the address turns into a chip — otherwise Save is rejected with "Enter at least one principal" (easy to miss: the email is sitting right there in the box). If you click a suggestion as well, you can end up with a duplicate chip — delete one with its ×. The grant only counts when you see the "Policy updated" toast; check the principal actually appears in the IAM list. Without this grant, every `EXTERNAL_QUERY` fails with the PostgreSQL connection error above.
 
 - **Wrong project in the picker** — you created the connection in the wrong project and now nothing in the lab matches. Check the picker first whenever something "isn't there."
 - **Connection ID typos in `EXTERNAL_QUERY`** — it must match exactly, in the form `region.connection-id` (for example `'us.my-connection'`).
