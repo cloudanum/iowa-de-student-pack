@@ -2,6 +2,8 @@
 
 Day 2 (Tue Oct 6), 10:45–11:15. The lab's own step-by-step lives in your Google Skills classroom seat (listed there as "Federated Query with BigQuery"); this companion is the orientation around it — what you're building, why, and what tends to go wrong.
 
+**Watch first:** `lab-walkthrough.mp4` (in this folder) is a full instructor run recorded live — connection, IAM grant, and both federated queries, end to end. `demo-assets.sql` (same folder) has every SQL statement used in the video, including the `web_log` and `customer_details` demo data, so you can rebuild the demo anywhere.
+
 ## The one thing to remember
 
 > **A federated query is BigQuery's version of a linked server with `OPENQUERY`.**
